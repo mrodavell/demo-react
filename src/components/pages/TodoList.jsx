@@ -6,15 +6,14 @@ import { useState } from "react";
 export default function TodoList() {
   const todo = JSON.parse(localStorage.getItem("todo"));
   const [todoList, setTodoList] = useState(todo || []);
+  const [task, setTask] = useState("");
 
   const handleAdd = () => {
-    let task = document.querySelector("#taskid").value;
-
     setTodoList((prevState) => {
       localStorage.setItem("todo", JSON.stringify([...prevState, task]));
       return [...prevState, task];
     });
-  }; 
+  };
 
   return (
     <div style={{ width: "100%", marginLeft: 50, marginRight: 50 }}>
@@ -36,9 +35,15 @@ export default function TodoList() {
         >
           <p>Todo List App</p>
           <div>
-            <Input id="taskid" placeholder="Enter task" />
-            <Button onClick={handleAdd}>Add</Button> 
+            <Input
+              id="taskid"
+              placeholder="Enter task"
+              value={task}
+              onChange={(ev) => setTask(ev.target.value)}
+            />
+            <Button onClick={handleAdd}>Add</Button>
           </div>
+          <p>Task:{task}</p>
           <p>Tasks</p>
           <div
             id="tasks"
