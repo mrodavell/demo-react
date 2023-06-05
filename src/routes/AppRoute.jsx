@@ -1,9 +1,10 @@
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import TodoList from "../components/pages/TodoList";
-import Home from "../components/pages/Home";
-import About from "../components/pages/About";
-import Profile from "../components/pages/Profile";
+const TodoList = React.lazy(() => import("../components/pages/TodoList"));
+const Home = React.lazy(() => import("../components/pages/Home"));
+const About = React.lazy(() => import("../components/pages/About"));
+const Profile = React.lazy(() => import("../components/pages/Profile"));
 
 export default function AppRoute() {
   return (
