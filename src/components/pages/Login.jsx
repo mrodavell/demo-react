@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -16,22 +14,39 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Copyright from '../ui/Copyright';
 import { useNavigate } from 'react-router';
-
+import doPost from '../../helpers/fetch_helper.js';
 
 export default function SignIn() {
 
   const navigate = useNavigate();
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-    
-    navigate("/home");
+  const handleSubmit = async (event) => {
+    try {
+      event.preventDefault();
+      setIsLoading(true);
+      const data = {
+        username,
+        password
+      }
+
+      let result = await doPost("http://localhost/backend/login.php", data);
+      
+      if (result.data.status) {
+        navigate('/home');
+      } else {
+        alert(result.data.message);
+      }
+
+    } catch (e) {
+      alert(e.toString());
+    } finally {
+      setIsLoading(false);
+    }
+
   };
 
   return (
@@ -66,6 +81,8 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={username}
+            onChange={(ev) => setUsername(ev.target.value)}
           />
           <TextField
             margin="normal"
@@ -87,16 +104,18 @@ export default function SignIn() {
                 </IconButton>
               </InputAdornment>
             }}
+            value={password}
+            onChange={(ev) => setPassword(ev.target.value)}
           />
-          <Button
+          <LoadingButton
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-
+            loading={isLoading}
           >
             Sign In
-          </Button>
+          </LoadingButton>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
